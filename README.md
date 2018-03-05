@@ -43,7 +43,7 @@ By saving the paths produced in training (not something the model will presently
 
 ---
 
-## Contact
+### Contact
 
 Should you have any queries or suggestions (all welcome), you should contact either:
 
