@@ -25,15 +25,15 @@ class Model():
         for i in range(1, num_layers + 1):
             with tf.variable_scope('hidden_layer_%d' % i):
                 if i == 1:
-                    weights['w%i' % i] = Weight([1, no_input, width]).tile(p)
-                    weights['b%i' % i] = Bias([1, 1, width]).tile(p)
+                    weights['w%i' % i] = Weight([1, no_input, width], DTYPE).tile(p)
+                    weights['b%i' % i] = Bias([1, 1, width], DTYPE).tile(p)
                 else:
-                    weights['w%i' % i] = Weight([1, width, width]).tile(p)
-                    weights['b%i' % i] = Bias([1, 1, width]).tile(p)
+                    weights['w%i' % i] = Weight([1, width, width], DTYPE).tile(p)
+                    weights['b%i' % i] = Bias([1, 1, width], DTYPE).tile(p)
 
         with tf.variable_scope('output_layer'):
-            weights['w0'] = Weight([1, width, 5]).tile(p)
-            weights['b0'] = Bias([1, 1, 5]).tile(p)
+            weights['w0'] = Weight([1, width, 5], DTYPE).tile(p)
+            weights['b0'] = Bias([1, 1, 5], DTYPE).tile(p)
 
         self.weights = weights
         self.num_layers = num_layers
@@ -45,8 +45,7 @@ class Model():
                 x_start, feature_init, self.weights, p, dt, T, params, tn_store, x1_store, x2_store, self.num_layers)
 
         with tf.name_scope('ELBO'):
-            mean_loss = ELBO(obs, tau, paths, variational_mu,
-                             variational_sigma, params, priors, p, dt)
+            mean_loss = ELBO(obs, tau, paths, variational_mu, variational_sigma, params, priors, p, dt)
             tf.summary.scalar('mean_loss', mean_loss)
 
         # specifying optimizer and gradient clipping for backprop
