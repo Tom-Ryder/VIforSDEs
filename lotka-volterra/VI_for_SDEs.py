@@ -26,10 +26,9 @@ class Model():
             with tf.variable_scope('hidden_layer_%d' % i):
                 if i == 1:
                     weights['w%i' % i] = Weight([1, no_input, width], DTYPE).tile(p)
-                    weights['b%i' % i] = Bias([1, 1, width], DTYPE).tile(p)
                 else:
                     weights['w%i' % i] = Weight([1, width, width], DTYPE).tile(p)
-                    weights['b%i' % i] = Bias([1, 1, width], DTYPE).tile(p)
+                weights['b%i' % i] = Bias([1, 1, width], DTYPE).tile(p)
 
         with tf.variable_scope('output_layer'):
             weights['w0'] = Weight([1, width, 5], DTYPE).tile(p)
