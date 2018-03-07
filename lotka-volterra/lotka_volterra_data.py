@@ -4,10 +4,12 @@ import numpy as np
 PATH_TO_TENSORBOARD_OUTPUT = "train/"
 
 # input data: observations and times
-inp = np.array([[71.        ,  93.79751636],
-       [  79.        ,  69.22939593]])
+inp = np.array([[  71.        ,   47.61225908,   80.53119269,   23.10087379,
+         158.05238324],
+       [  79.        ,  447.20971405,   50.26254069,  339.40432691,
+          66.79611979]])
 
-obs_times = np.arange(0,2)
+obs_times = np.arange(0,41,10)
 
 # know observation error variance and discretisation
 tau = 1.
