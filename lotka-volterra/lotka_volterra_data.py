@@ -15,7 +15,7 @@ obs_times = np.arange(0,41,10)
 tau = 1.
 dt = .1
 
-# number of monte-carlo sims used for loss
+# number of monte-carlo sims used for loss. must be greater than 1.
 p = 50
 
 # priors as lognormals.
