@@ -28,7 +28,7 @@ This example assumes a known, constant known variance of the measurement error (
 - The latent diffusion process.
 - The parameters in the description of the SDE.
 
-After entering the observations and observation times into the data file, and specifying the dimensions of the network in *VI_for_SDEs.py* (i.e. the number of layers and the number of nodes in each of those layers), we can then run the experiment using:
+After entering the observations, observation times, the discretization, variance of the measurement error and and specifying the dimensions of the network (i.e. the number of layers and the number of nodes in each of those layers) *lotka_volterra_data.py*, we can then run the experiment using:
 
 ```
 python VI_for_SDEs.py

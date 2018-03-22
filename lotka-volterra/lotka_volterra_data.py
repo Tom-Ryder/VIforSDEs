@@ -21,3 +21,7 @@ p = 50
 # priors as lognormals.
 priors = {'c1_mean': 0., 'c1_std': 3., 'c2_mean': 0.,
           'c2_std': 3., 'c3_mean': 0., 'c3_std': 3.}
+
+# network settings: width and depth
+num_hidden_layers = 4
+hidden_layer_width = 50

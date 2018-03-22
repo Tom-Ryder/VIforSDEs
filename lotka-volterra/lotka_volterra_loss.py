@@ -11,7 +11,6 @@ DTYPE = tf.float32
 NP_DTYPE = np.float32
 
 # functions for mu (alpha) and sigma (beta)
-
 def alpha(x1, x2, params):
     a = tf.concat([params['c1_strech'] * x1 - params['c2_strech'] * x1 * x2,
                    params['c2_strech'] * x1 * x2 - params['c3_strech'] * x2], 1)
@@ -27,7 +26,6 @@ def beta(x1, x2, params):
     return beta_chol
 
 # ELBO loss function
-
 def ELBO(obs, tau, x_, mu_, sigma_, params, priors, p, dt):
 
     for i in range(1, int(len(obs)/2 + 1)):

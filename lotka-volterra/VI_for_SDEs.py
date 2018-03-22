@@ -19,7 +19,7 @@ NP_DTYPE = np.float32
 
 class Model():
 
-    def __init__(self, num_layers, width):
+    def __init__(self, num_layers, width, p, dt):
         weights = {}
 
         for i in range(1, num_layers + 1):
@@ -36,15 +36,18 @@ class Model():
 
         self.weights = weights
         self.num_layers = num_layers
+        self.p = p
+        self.dt = dt
 
     def build(self):
+        print("Building graph...")
         # launching functions to create forward sims and calc the loss
         with tf.name_scope('diffusion_bridge'):
             paths, variational_mu, variational_sigma = self.diff_bridge(
-                x_start, feature_init, self.weights, p, dt, T, params, tn_store, x1_store, x2_store, self.num_layers)
+                x_start, feature_init, self.weights, p, self.dt, T, params, tn_store, x1_store, x2_store, self.num_layers)
 
         with tf.name_scope('ELBO'):
-            mean_loss = ELBO(obs, tau, paths, variational_mu, variational_sigma, params, priors, p, dt)
+            mean_loss = ELBO(obs, tau, paths, variational_mu, variational_sigma, params, priors, p, self.dt)
             tf.summary.scalar('mean_loss', mean_loss)
 
         # specifying optimizer and gradient clipping for backprop
@@ -130,9 +133,10 @@ class Model():
         return out
 
     # train the model
-    def train(self, niter):
+    def train(self, niter, PATH):
+        print("Running model...")
         writer = tf.summary.FileWriter(
-            '%s/%s' % (PATH_TO_TENSORBOARD_OUTPUT, datetime.now().strftime("%d:%m:%y-%H:%M:%S")), sess.graph)
+            '%s/%s' % (PATH, datetime.now().strftime("%d:%m:%y-%H:%M:%S")), sess.graph)
         for i in range(niter):
             self.train_step.run()
             if i % 10 == 0:
@@ -140,21 +144,20 @@ class Model():
                 writer.add_summary(summary, i)
 
     # functions to save and load models
-    def save(self):
-        #TODO
-        return
+    def save(self, SAVE_PATH):
+        saver = tf.train.Saver()
+        saver.save(sess, SAVE_PATH)
+        print("Model Saved")
 
-    def load(self):
-        #TODO
-        return
+    def load(self, LOAD_PATH):
+        saver = tf.train.Saver()
+        saver.restore(sess, LOAD_PATH)
+        print("Model Restored")
 
 if __name__ == "__main__":
-    lotka_volterra = Model(num_layers=4, width=50)
-    print("Building graph...")
+    lotka_volterra = Model(num_layers=num_hidden_layers, width=hidden_layer_width, p = p, dt = dt)
     lotka_volterra.build()
     with tf.Session() as sess:
-        print("Initializing variables...")
         sess.run(tf.global_variables_initializer())
-        print("Running model...")
         # desired number of iterations. currently no implementation of a convergence criteria.
-        lotka_volterra.train(250000)
+        lotka_volterra.train(25000, PATH_TO_TENSORBOARD_OUTPUT)
