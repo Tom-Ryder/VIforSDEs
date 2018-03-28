@@ -31,7 +31,7 @@ This example assumes a known, constant known variance of the measurement error (
 After entering the observations, observation times, the discretization, variance of the measurement error and and specifying the dimensions of the network (i.e. the number of layers and the number of nodes in each of those layers) *lotka_volterra_data.py*, we can then run the experiment using:
 
 ```
-python VI_for_SDEs.py
+python lotka_volterra_example.py
 ```
 
 Note that the model will infrequently produce an error relating to the Cholesky decomposition used in *VI_for_SDEs.py*. This typically happens early in training when the network has a tendency to produce ill-conditioned matrices leading to numerical instability. Should it, however, become a persistent issue (under the current settings it should not), you should increase the value of "eps_identity" in the function "rnn_cell" of *VI_for_SDEs.py*.

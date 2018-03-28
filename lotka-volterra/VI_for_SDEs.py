@@ -8,7 +8,6 @@ from datetime import datetime
 # model-specific imports
 from lotka_volterra_settings import *
 from lotka_volterra_loss import ELBO
-from lotka_volterra_data import PATH_TO_TENSORBOARD_OUTPUT
 from network_utils import Weight, Bias
 
 tfd = tf.contrib.distributions
@@ -19,7 +18,7 @@ NP_DTYPE = np.float32
 
 class Model():
 
-    def __init__(self, num_layers, width, p, dt):
+    def __init__(self, num_layers, width, p, dt, sess):
         weights = {}
 
         for i in range(1, num_layers + 1):
@@ -34,6 +33,7 @@ class Model():
             weights['w0'] = Weight([1, width, 5], DTYPE).tile(p)
             weights['b0'] = Bias([1, 1, 5], DTYPE).tile(p)
 
+        self.sess = sess
         self.weights = weights
         self.num_layers = num_layers
         self.p = p
@@ -72,6 +72,7 @@ class Model():
                 tf.summary.scalar('theta3_mean', c3_mean)
                 tf.summary.scalar('theta3_std', c3_std)
 
+        self.mean_loss = mean_loss
         self.merged = tf.summary.merge_all()
 
     # diffusion bridge function: rolls out rnn cell across the time series. Is there a nice way to do this in tensorflow?
@@ -136,28 +137,20 @@ class Model():
     def train(self, niter, PATH):
         print("Running model...")
         writer = tf.summary.FileWriter(
-            '%s/%s' % (PATH, datetime.now().strftime("%d:%m:%y-%H:%M:%S")), sess.graph)
+            '%s/%s' % (PATH, datetime.now().strftime("%d:%m:%y-%H:%M:%S")), self.sess.graph)
         for i in range(niter):
             self.train_step.run()
             if i % 10 == 0:
-                summary = sess.run(self.merged)
+                summary = self.sess.run(self.merged)
                 writer.add_summary(summary, i)
 
     # functions to save and load models
     def save(self, SAVE_PATH):
         saver = tf.train.Saver()
-        saver.save(sess, SAVE_PATH)
+        saver.save(self.sess, SAVE_PATH)
         print("Model Saved")
 
     def load(self, LOAD_PATH):
         saver = tf.train.Saver()
-        saver.restore(sess, LOAD_PATH)
+        saver.restore(self.sess, LOAD_PATH)
         print("Model Restored")
-
-if __name__ == "__main__":
-    lotka_volterra = Model(num_layers=num_hidden_layers, width=hidden_layer_width, p = p, dt = dt)
-    lotka_volterra.build()
-    with tf.Session() as sess:
-        sess.run(tf.global_variables_initializer())
-        # desired number of iterations. currently no implementation of a convergence criteria.
-        lotka_volterra.train(25000, PATH_TO_TENSORBOARD_OUTPUT)
