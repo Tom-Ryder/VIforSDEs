@@ -1,7 +1,7 @@
 ## Black-Box Variational Inference for Stochastic Differential Equations
 
 
-Tensorflow implementation of the Lotka-Volterra example detailed in [Black-box Variational Inference for Stochastic Differential Equations](https://arxiv.org/abs/1706.07561) (pre-print), by [Tom Ryder](https://scholar.google.com/citations?user=_qL2UDkAAAAJ&hl=en), [Andy Golightly](http://www.mas.ncl.ac.uk/~nag48/), [Stephen McGough](http://www.ncl.ac.uk/computing/people/profile/stephenmcgough.html#background) and [Dennis Prangle](http://www.ncl.ac.uk/maths-physics/staff/profile/dennisprangle.html#background).
+Tensorflow implementation of the Lotka-Volterra example detailed in [Black-box Variational Inference for Stochastic Differential Equations](https://arxiv.org/abs/1802.03335) (ICML, 2018), by [Tom Ryder](https://scholar.google.com/citations?user=_qL2UDkAAAAJ&hl=en), [Andy Golightly](http://www.mas.ncl.ac.uk/~nag48/), [Stephen McGough](http://www.ncl.ac.uk/computing/people/profile/stephenmcgough.html#background) and [Dennis Prangle](http://www.ncl.ac.uk/maths-physics/staff/profile/dennisprangle.html#background).
 
  ---
 
@@ -23,7 +23,7 @@ tensorboard --logdir=~/Documents/my_cool_model/train/
 Note that the parameter posteriors in tensorboard are parameterised using log-normals.
 
 #### Running the Example
-This example assumes a known, constant known variance of the measurement error (you can change the value in the data file) and attempts to learn:
+This example assumes a known, constant known variance of the measurement error (you can change the value in the data file, i.e. 'TAU') and attempts to learn:
 
 - The latent diffusion process.
 - The parameters in the description of the SDE.
@@ -31,7 +31,7 @@ This example assumes a known, constant known variance of the measurement error (
 After entering the observations, observation times, the discretization, variance of the measurement error and and specifying the dimensions of the network (i.e. the number of layers and the number of nodes in each of those layers) *lotka_volterra_data.py*, we can then run the experiment using:
 
 ```
-python lotka_volterra_example.py
+python VI_for_SDEs.py
 ```
 
 Note that the model will infrequently produce an error relating to the Cholesky decomposition used in *VI_for_SDEs.py*. This typically happens early in training when the network has a tendency to produce ill-conditioned matrices leading to numerical instability. Should it, however, become a persistent issue (under the current settings it should not), you should increase the value of "eps_identity" in the function "rnn_cell" of *VI_for_SDEs.py*.
