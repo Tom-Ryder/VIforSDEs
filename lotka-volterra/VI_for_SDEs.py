@@ -19,14 +19,7 @@ NP_DTYPE = np.float32
 
 class Model():
 
-    def __init__(self, network_params, p, dt, T, obs, params, priors, features):
-        '''
-        :params num_layers: number of hidden layers in NN
-        :params width: width of the hidden layers
-        :params p: number of particles for monte-carlo esitmate
-        :params dt: discretisation
-        :params sess: passing current tensorflow sess to Model train()
-        '''
+    def __init__(self, network_params, p, dt, obs, params, priors, features):
         weights = {}
 
         for i in range(1, network_params['num_hidden_layers'] + 1):
@@ -53,7 +46,6 @@ class Model():
         self.features = features
         self.p = p
         self.dt = dt
-        self.T = T
 
         # building computational graph
         self._build()
@@ -101,7 +93,8 @@ class Model():
         '''
         rolls out rnn cell across the time series
         '''
-        inp = tf.concat([self.obs['obs_init'], self.features['feature_init']], 2)
+        inp = tf.concat(
+            [self.obs['obs_init'], self.features['feature_init']], 2)
         pred_mu, pred_sigma = self._rnn_cell(inp)
         mu_store = tf.squeeze(pred_mu)
         sigma_store = tf.reshape(pred_sigma, [-1, 4])
@@ -109,7 +102,7 @@ class Model():
         path_store = tf.concat(
             [tf.reshape(inp[:, :, 0:2], [-1, 2, 1]), tf.reshape(output, [-1, 2, 1])], 2)
 
-        for i in range(int(self.T / self.dt) - 1):
+        for i in range(int(self.obs['T'] / self.dt) - 1):
             x1_next_vec = tf.fill([self.p, 1, 1], self.features['x1_store'][i])
             x2_next_vec = tf.fill([self.p, 1, 1], self.features['x2_store'][i])
 
@@ -131,6 +124,7 @@ class Model():
     def _rnn_cell(self, inp, eps_identity=1e-3):
         '''
         rnn cell for supplying Gaussian state transitions
+        :param eps: eps * identity added to diffusion matrix to control numerical stability
         '''
         hidden_layer = tf.nn.relu(
             tf.add(tf.matmul(inp, self.weights['w1']), self.weights['b1']))
@@ -204,7 +198,7 @@ class Model():
 if __name__ == "__main__":
     with tf.Session() as sess:
         lotka_volterra = Model(network_params=NETWORK_PARAMS, p=P,
-                               dt=DT, T=T, obs=obs, params=params, priors=PRIORS, features=features)
+                               dt=DT, obs=obs, params=params, priors=PRIORS, features=features)
         sess.run(tf.global_variables_initializer())
         # desired number of iterations. currently no implementation of a
         # convergence criteria.

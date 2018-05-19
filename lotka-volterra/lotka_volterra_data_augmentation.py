@@ -89,7 +89,7 @@ features = {'tn_store': tn_store, 'x1_store': x1_store, 'x2_store': x2_store, 'f
 x_start = tf.expand_dims(tfd.MultivariateNormalDiag(
     loc=x0, scale_diag=[TAU] * 2).sample(P), axis=1)
 
-obs = {'obs_init': x_start, 'obs': OBS, 'times': OBS_TIMES, 'tau': TAU}
+obs = {'obs_init': x_start, 'obs': OBS, 'times': OBS_TIMES, 'tau': TAU, 'T': T}
 
 #####################################
 # Mean-field vartiational inference #
