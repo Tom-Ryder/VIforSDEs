@@ -1,0 +1,9 @@
+from typing import TypeVar, Callable, Generic, Any
+
+_F = TypeVar("_F", bound=Callable[..., object])
+
+class JITFunction(Generic[_F]):
+    def __call__(self, *args: Any, **kwargs: Any) -> Any: ...
+    def __getitem__(self, grid: Any) -> Callable[..., None]: ...
+
+def jit(fn: _F) -> JITFunction[_F]: ...

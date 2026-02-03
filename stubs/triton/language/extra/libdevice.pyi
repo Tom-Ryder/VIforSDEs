@@ -1,0 +1,3 @@
+from triton.language import tensor
+
+def tanh(x: tensor) -> tensor: ...

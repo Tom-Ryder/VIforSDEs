@@ -1,0 +1,40 @@
+[project]
+name = "variational-sde"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "torch>=2.5",
+    "triton>=3.2; sys_platform == 'linux'",
+    "einops>=0.8",
+    "pydantic>=2.10",
+    "pyyaml>=6.0",
+    "matplotlib>=3.9",
+    "rich>=13.9",
+]
+
+[project.optional-dependencies]
+plotting = ["plotly>=5.0"]
+dev = ["pytest>=7.0", "mypy>=1.0", "ruff>=0.1"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.19.1",
+    "pytest>=8.0",
+    "ruff>=0.14.11",
+    "types-pyyaml>=6.0.12.20250915",
+    "vulture>=2.14",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+
+[tool.mypy]
+strict = true
+disallow_untyped_calls = false
+mypy_path = "stubs"
+
